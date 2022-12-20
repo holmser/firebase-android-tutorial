@@ -7,7 +7,7 @@ steps:
   args: ['cp', '-a', '.', '/persistent_volume']
   
 # Build APK with Gradle Image from mounted /persistent_volume using name: vol1
-- name: 'gcr.io/cloud-builders/docker'
+- name: 'us-central1-docker.pkg.dev/firebase-cloudbuild-demo/firebase-cloudbuild-demo/cloudbuild-android'
   volumes:
   - name: 'vol1'
     path: '/persistent_volume'
