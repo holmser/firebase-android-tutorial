@@ -1,6 +1,6 @@
 steps:
 # Set a persistent volume according to https://cloud.google.com/cloud-build/docs/build-config (search for volumes)
-- name: eu.gcr.io/$PROJECT_ID/$PROJECT_ID/cloudbuild-android
+- name: us-central1-docker.pkg.dev/firebase-cloudbuild-demo/firebase-cloudbuild-demo/cloudbuild-android
   id: 'docker-pull'
   args: ['cp', '-a', '.', '/persistent_volume']
   volumes:
@@ -12,7 +12,7 @@ steps:
   volumes:
   - name: data
     path: /persistent_volume
-  args: ['run', '-v', 'data:/workspace', '--rm', 'eu.gcr.io/$PROJECT_ID/$PROJECT_ID/cloudbuild', '/bin/sh', '-c', 'cd /workspace && ./gradlew mobile:assembleDebug && mv mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk && ls -la mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk']
+  args: ['run', '-v', 'data:/workspace', '--rm', 'us-central1-docker.pkg.dev/firebase-cloudbuild-demo/firebase-cloudbuild-demo/cloudbuild-android', '/bin/sh', '-c', 'cd /workspace && ./gradlew mobile:assembleDebug && mv mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk && ls -la mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk']
 
 
 artifacts:
