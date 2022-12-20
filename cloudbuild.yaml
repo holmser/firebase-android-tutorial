@@ -1,24 +1,19 @@
 steps:
 # Set a persistent volume according to https://cloud.google.com/cloud-build/docs/build-config (search for volumes)
-- name: 'ubuntu'
-  volumes:
-  - name: 'vol1'
-    path: '/persistent_volume'
+- name: eu.gcr.io/$PROJECT_ID/$PROJECT_ID/cloudbuild-android
+  id: 'docker-pull'
   args: ['cp', '-a', '.', '/persistent_volume']
-  
-# Build APK with Gradle Image from mounted /persistent_volume using name: vol1
-- name: 'us-central1-docker.pkg.dev/firebase-cloudbuild-demo/firebase-cloudbuild-demo/cloudbuild-android'
   volumes:
-  - name: 'vol1'
-    path: '/persistent_volume'
-  args: ['run', '-v', 'vol1:/home/app', '--rm', 'gcr.io/fullstackgcp/gradle', '/bin/sh', '-c', 'cd /home/app && ./gradlew clean assembleDebug']
+  - name: data
+    path: /persistent_volume
 
-# Push the APK Output from vol1 to your GCS Bucket with Short Commit SHA.
-# - name: 'gcr.io/cloud-builders/gsutil'
-#   volumes:
-#   - name: 'vol1'
-#     path: '/persistent_volume'
-#   args: ['cp', '/persistent_volume/app/build/outputs/apk/debug/app-debug.apk', 'gs://fullstackgcp-apk-builds/app-debug-$SHORT_SHA.apk']
+- name: gcr.io/cloud-builders/docker
+  id: 'gradle-build'
+  volumes:
+  - name: data
+    path: /persistent_volume
+  args: ['run', '-v', 'data:/workspace', '--rm', 'eu.gcr.io/$PROJECT_ID/$PROJECT_ID/cloudbuild', '/bin/sh', '-c', 'cd /workspace && ./gradlew mobile:assembleDebug && mv mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk && ls -la mobile/build/outputs/apk/debug/$REPO_NAME-$SHORT_SHA-debug.apk']
+
 
 artifacts:
   objects:
